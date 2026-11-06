@@ -28,8 +28,8 @@ Las notificaciones al estudiante se simulan por consola. Los datos se guardan en
 ## Instalación y uso
 
 ```bash
-git clone <URL-del-repo>
-cd gestion-solicitudes-academicas
+git clone https://github.com/Genaro-Luna/Gestor_Solicitudes.git
+cd Gestor_Solicitudes
 mvn compile   # compila
 mvn test      # corre las pruebas
 ```
