@@ -1,0 +1,13 @@
+# Etapa 3 — Deuda técnica y code smells
+**Responsable:** Mathias 
+
+| Nº | Code smell | Evidencia (Fragmento de código) | Ubicación | Impacto | Riesgo | Prioridad |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | **Data Clumps** | `public int registrarSolicitud(String legajo, String nombre, String apellido, String email, String tipo, String prioridad, String descripcion)` | `GestorSolicitudes.java` (Línea 17) | Agrupa muchos parámetros sueltos en lugar de usar un objeto (ej. DTO). | Medio | Media |
+| 2 | **Duplicated Code** | `for (int i = 0; i < lst.size(); i++) { if (lst.get(i).id == id) { s = lst.get(i); } }` | `GestorSolicitudes.java` | El bloque de búsqueda por ID está copiado y pegado en 4 métodos distintos. | Alto | Alta |
+| 3 | **Primitive Obsession / Magic Strings**| `if (!tipo.equals("CERTIFICADO") ...)` y `public String estado;` | `GestorSolicitudes.java` y `Solicitud.java` | Se usa `String` para conceptos del dominio (Estado, Tipo, Prioridad) en vez de `Enums`. | Alto | Alta |
+| 4 | **Falta de Encapsulamiento** | `public String legajo;` / `s.estado = "EN_REVISION";` | `Estudiante.java`, `Solicitud.java` | Todos los atributos son públicos; el Gestor altera el estado interno directamente. | Alto | Alta |
+| 5 | **Empty Catch Block** | `catch (Exception ex) { }` | `GestorSolicitudes.java` | Se captura una excepción al enviar emails y se ignora por completo. | Medio | Media |
+| 6 | **Long Method / Switch Statements** | `if (op == 1) { ... } else if (op == 2) { ... }` | `Main.java` | El método `main` hace de todo: maneja el menú y delega en una cadena gigante de `if/else`. | Alto | Alta |
+| 7 | **Feature Envy** | `long dias = ChronoUnit.DAYS.between(s.fechaCreacion, LocalDate.now());` | `GestorSolicitudes.java` | El Gestor le pide datos a `Solicitud` para calcular vencimientos, en vez de que `Solicitud` lo haga. | Medio | Media |
+| 8 | **Dead Code** | `// public void borrarSolicitud(int id) { ... }` | `GestorSolicitudes.java` | Hay código comentado y obsoleto que quedó olvidado en la clase. | Bajo | Baja |
