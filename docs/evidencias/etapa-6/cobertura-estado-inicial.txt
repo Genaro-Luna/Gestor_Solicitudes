@@ -1,0 +1,20 @@
+Clase                         Lineas     Ramas   Metodos
+Estudiante                    6/6       0/0       1/1   
+NotificadorEmail              3/3       0/0       2/2   
+GestorSolicitudes           166/170   132/136    11/11  
+Responsable                   4/4       0/0       1/1   
+Solicitud                     4/4       2/2       2/2   
+Main                         76/77     29/30      2/3   
+TOTAL                       259/264   163/168    19/20  
+Cobertura de lineas: 98.1%  | de ramas: 97.0%
+-- Lineas NO cubiertas o con ramas parciales --
+Main.java:6  sin cubrir
+Main.java:57  ramas 1/2
+GestorSolicitudes.java:87  sin cubrir
+GestorSolicitudes.java:121  sin cubrir
+GestorSolicitudes.java:149  ramas 1/2
+GestorSolicitudes.java:153  sin cubrir
+GestorSolicitudes.java:161  ramas 1/2
+GestorSolicitudes.java:175  sin cubrir
+GestorSolicitudes.java:237  ramas 1/2
+GestorSolicitudes.java:241  ramas 1/2

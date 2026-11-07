@@ -1,0 +1,84 @@
+== Cobertura sobre estado-refactorizado: solo pruebas del contrato (108)
+Clase                         Lineas     Ramas   Metodos
+EstadoSolicitud              17/20     22/26      5/5   
+DatosRegistroSolicitud        1/1       0/0       1/1   
+Notificador                   0/0       0/0       0/0   
+Prioridad                    13/13      2/2       4/4   
+TipoSolicitud                 7/7       2/2       2/2   
+Estudiante                    9/11      0/0       4/6   
+GeneradorReporteSolicitudes   34/34      4/4       7/7   
+NotificadorEmail              3/3       0/0       2/2   
+GestorSolicitudes           118/122    42/42     24/25  
+Responsable                   5/6       0/0       2/3   
+Solicitud                    33/37     18/20     15/19  
+Main                         90/95     23/26     11/12  
+TOTAL                       330/349   113/122    77/86  
+Cobertura de lineas: 94.6%  | de ramas: 92.6%
+-- Lineas NO cubiertas o con ramas parciales --
+Solicitud.java:55  sin cubrir
+Solicitud.java:59  sin cubrir
+Solicitud.java:63  sin cubrir
+Solicitud.java:67  ramas 1/2
+Solicitud.java:84  ramas 1/2
+Solicitud.java:96  sin cubrir
+Main.java:6  sin cubrir
+Main.java:62  ramas 1/2
+Main.java:63  sin cubrir
+Main.java:64  sin cubrir
+Main.java:70  ramas 1/2
+Main.java:78  ramas 1/2
+Main.java:79  sin cubrir
+Main.java:80  sin cubrir
+EstadoSolicitud.java:21  ramas 1/2
+EstadoSolicitud.java:22  sin cubrir
+EstadoSolicitud.java:24  ramas 3/4
+EstadoSolicitud.java:25  ramas 3/4
+EstadoSolicitud.java:28  sin cubrir
+EstadoSolicitud.java:33  ramas 1/2
+EstadoSolicitud.java:34  sin cubrir
+GestorSolicitudes.java:28  sin cubrir
+GestorSolicitudes.java:29  sin cubrir
+GestorSolicitudes.java:231  sin cubrir
+GestorSolicitudes.java:232  sin cubrir
+Responsable.java:18  sin cubrir
+Estudiante.java:22  sin cubrir
+Estudiante.java:26  sin cubrir
+
+== Cobertura sobre estado-refactorizado: contrato + inyeccion de dependencias + mejoras (122)
+Clase                         Lineas     Ramas   Metodos
+EstadoSolicitud              17/20     22/26      5/5   
+DatosRegistroSolicitud        1/1       0/0       1/1   
+Notificador                   0/0       0/0       0/0   
+Prioridad                    13/13      2/2       4/4   
+TipoSolicitud                 7/7       2/2       2/2   
+Estudiante                    9/11      0/0       4/6   
+GeneradorReporteSolicitudes   34/34      4/4       7/7   
+NotificadorEmail              3/3       0/0       2/2   
+GestorSolicitudes           122/122    42/42     25/25  
+Responsable                   5/6       0/0       2/3   
+Solicitud                    33/37     18/20     15/19  
+Main                         92/95     24/26     11/12  
+TOTAL                       336/349   114/122    78/86  
+Cobertura de lineas: 96.3%  | de ramas: 93.4%
+-- Lineas NO cubiertas o con ramas parciales --
+Solicitud.java:55  sin cubrir
+Solicitud.java:59  sin cubrir
+Solicitud.java:63  sin cubrir
+Solicitud.java:67  ramas 1/2
+Solicitud.java:84  ramas 1/2
+Solicitud.java:96  sin cubrir
+Main.java:6  sin cubrir
+Main.java:62  ramas 1/2
+Main.java:63  sin cubrir
+Main.java:64  sin cubrir
+Main.java:70  ramas 1/2
+EstadoSolicitud.java:21  ramas 1/2
+EstadoSolicitud.java:22  sin cubrir
+EstadoSolicitud.java:24  ramas 3/4
+EstadoSolicitud.java:25  ramas 3/4
+EstadoSolicitud.java:28  sin cubrir
+EstadoSolicitud.java:33  ramas 1/2
+EstadoSolicitud.java:34  sin cubrir
+Responsable.java:18  sin cubrir
+Estudiante.java:22  sin cubrir
+Estudiante.java:26  sin cubrir
