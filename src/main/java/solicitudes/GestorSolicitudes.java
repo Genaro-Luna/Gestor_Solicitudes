@@ -1,276 +1,183 @@
 package solicitudes;
 
+import java.time.Clock;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
- * Clase principal del sistema. Maneja todo lo de las solicitudes.
+ * Servicio coordinador de la gestion de solicitudes academicas.
  */
 public class GestorSolicitudes {
 
-    private ArrayList<Solicitud> lst = new ArrayList<>();
-    private ArrayList<Estudiante> estudiantes = new ArrayList<>();
-    private int cont = 1;
-    private NotificadorEmail notif = new NotificadorEmail();
+    private final List<Solicitud> solicitudes = new ArrayList<>();
+    private final List<Estudiante> estudiantes = new ArrayList<>();
+    private int proximoId = 1;
+    private final Notificador notificador;
+    private final GeneradorReporteSolicitudes generadorReporte;
+    private final Clock clock;
 
-    // registra una solicitud nueva. devuelve el id o -1 si hubo error
+    public GestorSolicitudes() {
+        this(new NotificadorEmail(), new GeneradorReporteSolicitudes(), Clock.systemDefaultZone());
+    }
+
+    public GestorSolicitudes(Notificador notificador) {
+        this(notificador, new GeneradorReporteSolicitudes(), Clock.systemDefaultZone());
+    }
+
+    public GestorSolicitudes(Notificador notificador, GeneradorReporteSolicitudes generadorReporte, Clock clock) {
+        this.notificador = notificador;
+        this.generadorReporte = generadorReporte;
+        this.clock = clock;
+    }
+
     public int registrarSolicitud(String legajo, String nombre, String apellido, String email,
                                   String tipo, String prioridad, String descripcion) {
-        // validaciones
-        if (legajo == null || legajo.trim().equals("")) {
-            System.out.println("Error: el legajo es obligatorio");
+        DatosRegistroSolicitud datos = new DatosRegistroSolicitud(
+                legajo, nombre, apellido, email, tipo, prioridad, descripcion
+        );
+        return registrarSolicitud(datos);
+    }
+
+    public int registrarSolicitud(DatosRegistroSolicitud datos) {
+        if (!validarDatosEstudiante(datos)) {
             return -1;
         }
-        if (nombre == null || nombre.trim().equals("") || apellido == null || apellido.trim().equals("")) {
-            System.out.println("Error: nombre y apellido son obligatorios");
-            return -1;
-        }
-        if (email == null || !email.contains("@")) {
-            System.out.println("Error: email invalido");
-            return -1;
-        }
-        if (tipo == null) {
+
+        Optional<TipoSolicitud> tipoOpt = TipoSolicitud.desdeTexto(datos.tipo());
+        if (tipoOpt.isEmpty()) {
             System.out.println("Error: tipo invalido");
             return -1;
         }
-        tipo = tipo.toUpperCase();
-        if (!tipo.equals("CERTIFICADO") && !tipo.equals("EQUIVALENCIA")
-                && !tipo.equals("CAMBIO_COMISION") && !tipo.equals("RECLAMO_NOTA")) {
-            System.out.println("Error: tipo invalido");
-            return -1;
-        }
-        if (prioridad == null) {
+
+        Optional<Prioridad> prioridadOpt = Prioridad.desdeTexto(datos.prioridad());
+        if (prioridadOpt.isEmpty()) {
             System.out.println("Error: prioridad invalida");
             return -1;
         }
-        prioridad = prioridad.toUpperCase();
-        if (!prioridad.equals("BAJA") && !prioridad.equals("MEDIA") && !prioridad.equals("ALTA")) {
-            System.out.println("Error: prioridad invalida");
-            return -1;
-        }
-        if (descripcion == null || descripcion.trim().length() < 10) {
+
+        if (!Solicitud.esDescripcionValida(datos.descripcion())) {
             System.out.println("Error: la descripcion debe tener al menos 10 caracteres");
             return -1;
         }
 
-        // busco si el estudiante ya existe, si no lo creo
-        Estudiante e = null;
-        for (int i = 0; i < estudiantes.size(); i++) {
-            if (estudiantes.get(i).legajo.equals(legajo)) {
-                e = estudiantes.get(i);
-            }
-        }
-        if (e == null) {
-            e = new Estudiante(legajo, nombre, apellido, email);
-            estudiantes.add(e);
-        }
+        Estudiante estudiante = obtenerOCrearEstudiante(datos);
+        Solicitud nuevaSolicitud = new Solicitud(
+                proximoId++,
+                estudiante,
+                tipoOpt.get(),
+                prioridadOpt.get(),
+                datos.descripcion(),
+                LocalDate.now(clock)
+        );
+        solicitudes.add(nuevaSolicitud);
 
-        // creo la solicitud
-        Solicitud s = new Solicitud();
-        s.id = cont;
-        cont++;
-        s.estudiante = e;
-        s.tipo = tipo;
-        s.prioridad = prioridad;
-        s.estado = "PENDIENTE";
-        s.descripcion = descripcion.trim();
-        s.fechaCreacion = LocalDate.now();
-        lst.add(s);
+        notificarEstudiante(
+                estudiante,
+                "Solicitud registrada",
+                "tu solicitud #" + nuevaSolicitud.getId()
+                        + " de tipo " + nuevaSolicitud.getTipo()
+                        + " fue registrada con prioridad " + nuevaSolicitud.getPrioridad()
+        );
 
-        // aviso al estudiante
-        try {
-            notif.enviar(e.email, "Solicitud registrada",
-                    "Hola " + e.nombre + " " + e.apellido + ", tu solicitud #" + s.id
-                            + " de tipo " + s.tipo + " fue registrada con prioridad " + s.prioridad);
-        } catch (Exception ex) {
-        }
-
-        return s.id;
+        return nuevaSolicitud.getId();
     }
 
-    // asigna un responsable a la solicitud
     public boolean asignarResponsable(int id, String nombreResp, String area) {
-        Solicitud s = null;
-        for (int i = 0; i < lst.size(); i++) {
-            if (lst.get(i).id == id) {
-                s = lst.get(i);
-            }
-        }
-        if (s == null) {
+        Solicitud solicitud = obtener(id);
+        if (solicitud == null) {
             System.out.println("Error: no existe la solicitud " + id);
             return false;
         }
-        if (s.estado.equals("CERRADA") || s.estado.equals("RECHAZADA")) {
+        if (solicitud.estaFinalizada()) {
             System.out.println("Error: la solicitud ya esta finalizada");
             return false;
         }
-        if (nombreResp == null || nombreResp.trim().equals("")) {
+        if (esTextoVacio(nombreResp)) {
             System.out.println("Error: el responsable es obligatorio");
             return false;
         }
-        s.responsable = new Responsable(nombreResp, area);
-        if (s.estado.equals("PENDIENTE")) {
-            s.estado = "EN_REVISION";
-        }
-        try {
-            notif.enviar(s.estudiante.email, "Responsable asignado",
-                    "Hola " + s.estudiante.nombre + " " + s.estudiante.apellido + ", tu solicitud #" + s.id
-                            + " fue asignada a " + nombreResp + " (" + area + ")");
-        } catch (Exception ex) {
-        }
+
+        solicitud.asignarResponsable(new Responsable(nombreResp, area));
+        notificarEstudiante(
+                solicitud.getEstudiante(),
+                "Responsable asignado",
+                "tu solicitud #" + solicitud.getId()
+                        + " fue asignada a " + nombreResp + " (" + area + ")"
+        );
         return true;
     }
 
-    // cambia el estado de la solicitud
-    public boolean cambiarEstado(int id, String nuevoEstado) {
-        Solicitud s = null;
-        for (int i = 0; i < lst.size(); i++) {
-            if (lst.get(i).id == id) {
-                s = lst.get(i);
-            }
-        }
-        if (s == null) {
+    public boolean cambiarEstado(int id, String nuevoEstadoTexto) {
+        Solicitud solicitud = obtener(id);
+        if (solicitud == null) {
             System.out.println("Error: no existe la solicitud " + id);
             return false;
         }
-        if (nuevoEstado == null) {
+        if (nuevoEstadoTexto == null) {
             return false;
         }
-        nuevoEstado = nuevoEstado.toUpperCase();
-        if (s.estado.equals("CERRADA") || s.estado.equals("RECHAZADA")) {
+        if (solicitud.estaFinalizada()) {
             System.out.println("Error: la solicitud ya esta finalizada");
             return false;
         }
-        boolean ok = false;
-        if (s.estado.equals("PENDIENTE")) {
-            if (nuevoEstado.equals("EN_REVISION")) {
-                if (s.responsable == null) {
-                    System.out.println("Error: primero hay que asignar un responsable");
-                    return false;
-                }
-                ok = true;
-            } else if (nuevoEstado.equals("RECHAZADA")) {
-                ok = true;
-            }
-        } else if (s.estado.equals("EN_REVISION")) {
-            if (nuevoEstado.equals("RESUELTA") || nuevoEstado.equals("RECHAZADA")) {
-                ok = true;
-            }
-        } else if (s.estado.equals("RESUELTA")) {
-            if (nuevoEstado.equals("CERRADA")) {
-                ok = true;
-            }
-        }
-        if (!ok) {
-            System.out.println("Error: no se puede pasar de " + s.estado + " a " + nuevoEstado);
+
+        String estadoNormalizado = nuevoEstadoTexto.toUpperCase();
+        Optional<EstadoSolicitud> nuevoEstadoOpt = EstadoSolicitud.desdeTexto(estadoNormalizado);
+
+        if (nuevoEstadoOpt.isEmpty()) {
+            System.out.println("Error: no se puede pasar de " + solicitud.getEstado() + " a " + estadoNormalizado);
             return false;
         }
-        s.estado = nuevoEstado;
-        try {
-            notif.enviar(s.estudiante.email, "Cambio de estado",
-                    "Hola " + s.estudiante.nombre + " " + s.estudiante.apellido + ", tu solicitud #" + s.id
-                            + " ahora esta " + s.estado);
-        } catch (Exception ex) {
+
+        EstadoSolicitud nuevoEstado = nuevoEstadoOpt.get();
+        if (solicitud.requiereResponsableParaTransicionarA(nuevoEstado)) {
+            System.out.println("Error: primero hay que asignar un responsable");
+            return false;
         }
+        if (!solicitud.puedeCambiarA(nuevoEstado)) {
+            System.out.println("Error: no se puede pasar de " + solicitud.getEstado() + " a " + nuevoEstado);
+            return false;
+        }
+
+        solicitud.cambiarEstado(nuevoEstado);
+        notificarEstudiante(
+                solicitud.getEstudiante(),
+                "Cambio de estado",
+                "tu solicitud #" + solicitud.getId() + " ahora esta " + solicitud.getEstado()
+        );
         return true;
     }
 
     public Solicitud obtener(int id) {
-        for (int i = 0; i < lst.size(); i++) {
-            if (lst.get(i).id == id) {
-                return lst.get(i);
-            }
-        }
-        return null;
+        return solicitudes.stream()
+                .filter(solicitud -> solicitud.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
     public List<Solicitud> buscarPorEstado(String estado) {
-        List<Solicitud> res = new ArrayList<>();
-        for (int i = 0; i < lst.size(); i++) {
-            if (lst.get(i).estado.equalsIgnoreCase(estado)) {
-                res.add(lst.get(i));
-            }
-        }
-        return res;
+        return filtrarSolicitudes(solicitud -> solicitud.getEstado().name().equalsIgnoreCase(estado));
     }
 
     public List<Solicitud> buscarPorTipo(String tipo) {
-        List<Solicitud> res = new ArrayList<>();
-        for (int i = 0; i < lst.size(); i++) {
-            if (lst.get(i).tipo.equalsIgnoreCase(tipo)) {
-                res.add(lst.get(i));
-            }
-        }
-        return res;
+        return filtrarSolicitudes(solicitud -> solicitud.getTipo().name().equalsIgnoreCase(tipo));
     }
 
     public List<Solicitud> buscarPorLegajo(String legajo) {
-        List<Solicitud> res = new ArrayList<>();
-        for (int i = 0; i < lst.size(); i++) {
-            if (lst.get(i).estudiante.legajo.equals(legajo)) {
-                res.add(lst.get(i));
-            }
-        }
-        return res;
+        return filtrarSolicitudes(solicitud -> solicitud.getEstudiante().getLegajo().equals(legajo));
     }
 
     public List<Solicitud> listarTodas() {
-        return lst;
+        return Collections.unmodifiableList(solicitudes);
     }
 
-    // genera el reporte general
     public String generarReporte() {
-        String r = "";
-        r = r + "===== REPORTE DE SOLICITUDES =====\n";
-        r = r + "Total: " + lst.size() + "\n";
-        int p = 0, er = 0, res = 0, rech = 0, c = 0;
-        int a = 0, m = 0, b = 0;
-        int venc = 0;
-        for (int i = 0; i < lst.size(); i++) {
-            Solicitud s = lst.get(i);
-            if (s.estado.equals("PENDIENTE")) p++;
-            else if (s.estado.equals("EN_REVISION")) er++;
-            else if (s.estado.equals("RESUELTA")) res++;
-            else if (s.estado.equals("RECHAZADA")) rech++;
-            else if (s.estado.equals("CERRADA")) c++;
-
-            if (s.prioridad.equals("ALTA")) a++;
-            else if (s.prioridad.equals("MEDIA")) m++;
-            else if (s.prioridad.equals("BAJA")) b++;
-
-            // calculo si esta vencida segun la prioridad
-            if (s.estado.equals("PENDIENTE") || s.estado.equals("EN_REVISION")) {
-                long dias = ChronoUnit.DAYS.between(s.fechaCreacion, LocalDate.now());
-                int x = 0;
-                if (s.prioridad.equals("ALTA")) x = 2;
-                else if (s.prioridad.equals("MEDIA")) x = 5;
-                else x = 10;
-                if (dias > x) venc++;
-            }
-        }
-        r = r + "-- Por estado --\n";
-        r = r + "PENDIENTE: " + p + "\n";
-        r = r + "EN_REVISION: " + er + "\n";
-        r = r + "RESUELTA: " + res + "\n";
-        r = r + "RECHAZADA: " + rech + "\n";
-        r = r + "CERRADA: " + c + "\n";
-        r = r + "-- Por prioridad --\n";
-        r = r + "ALTA: " + a + "\n";
-        r = r + "MEDIA: " + m + "\n";
-        r = r + "BAJA: " + b + "\n";
-        r = r + "Vencidas: " + venc + "\n";
-        r = r + "==================================";
-        return r;
+        return generadorReporte.generar(solicitudes, LocalDate.now(clock));
     }
-
-    // metodo viejo, ya no se usa
-    // public void borrarSolicitud(int id) {
-    //     for (int i = 0; i < lst.size(); i++) {
-    //         if (lst.get(i).id == id) lst.remove(i);
-    //     }
-    // }
 
     public void cargarDatosDePrueba() {
         registrarSolicitud("1001", "Ana", "Gomez", "ana.gomez@mail.com", "CERTIFICADO", "ALTA",
@@ -280,5 +187,53 @@ public class GestorSolicitudes {
         registrarSolicitud("1001", "Ana", "Gomez", "ana.gomez@mail.com", "RECLAMO_NOTA", "BAJA",
                 "Reclamo por nota del segundo parcial de Matematica");
         asignarResponsable(2, "Laura Diaz", "Bedelia");
+    }
+
+    private boolean validarDatosEstudiante(DatosRegistroSolicitud datos) {
+        if (esTextoVacio(datos.legajo())) {
+            System.out.println("Error: el legajo es obligatorio");
+            return false;
+        }
+        if (esTextoVacio(datos.nombre()) || esTextoVacio(datos.apellido())) {
+            System.out.println("Error: nombre y apellido son obligatorios");
+            return false;
+        }
+        if (datos.email() == null || !datos.email().contains("@")) {
+            System.out.println("Error: email invalido");
+            return false;
+        }
+        return true;
+    }
+
+    private Estudiante obtenerOCrearEstudiante(DatosRegistroSolicitud datos) {
+        return estudiantes.stream()
+                .filter(estudiante -> estudiante.getLegajo().equals(datos.legajo()))
+                .findFirst()
+                .orElseGet(() -> {
+                    Estudiante nuevo = new Estudiante(
+                            datos.legajo(), datos.nombre(), datos.apellido(), datos.email()
+                    );
+                    estudiantes.add(nuevo);
+                    return nuevo;
+                });
+    }
+
+    private List<Solicitud> filtrarSolicitudes(Predicate<Solicitud> criterio) {
+        return solicitudes.stream()
+                .filter(criterio)
+                .toList();
+    }
+
+    private void notificarEstudiante(Estudiante estudiante, String asunto, String detalleEvento) {
+        try {
+            String mensaje = "Hola " + estudiante.getNombreCompleto() + ", " + detalleEvento;
+            notificador.enviar(estudiante.getEmail(), asunto, mensaje);
+        } catch (RuntimeException ex) {
+            System.err.println("Advertencia: no se pudo enviar la notificacion al estudiante: " + ex.getMessage());
+        }
+    }
+
+    private boolean esTextoVacio(String texto) {
+        return texto == null || texto.trim().isEmpty();
     }
 }
