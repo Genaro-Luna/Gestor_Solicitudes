@@ -48,4 +48,11 @@ Vencidas: 0
 
 ## Defecto externo conocido (versión inicial)
 
-En el menú de consola, si en las opciones 2 o 3 se ingresa un id no numérico, el programa termina con `NumberFormatException`. Se documenta en la Etapa 2; corregirlo es una mejora de comportamiento, no una regresión.
+En el menú de consola, si en las opciones 2 o 3 se ingresa un id no numérico, el programa termina con `NumberFormatException`. Se documenta en la Etapa 2; corregirlo es una mejora de comportamiento, no una regresión. **Corregido en `estado-refactorizado`:** el menú informa que el id debe ser numérico y continúa.
+
+## Cambios de comportamiento declarados (versión refactorizada)
+
+| Cambio | Antes (`estado-inicial`) | Después (`estado-refactorizado`) | Origen |
+|--------|--------------------------|----------------------------------|--------|
+| Espacios en los extremos de tipo, prioridad y estado | `" certificado "` devolvía -1 y `" resuelta "` devolvía false | Se ignoran los espacios: se aceptan como `CERTIFICADO` y `RESUELTA` | Observación F-01 del code review (Etapa 7). Se acepta como mejora: no rompe ninguna prueba del contrato y hace la entrada más tolerante. |
+| `listarTodas()` | Devolvía la lista interna, modificable desde afuera | Devuelve una vista de solo lectura | Defecto de encapsulamiento de la Etapa 2 (prueba MJ-02) |
