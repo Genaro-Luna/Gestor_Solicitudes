@@ -1,0 +1,181 @@
+╷
+├─ JUnit Platform Suite ✔
+├─ JUnit Jupiter ✔
+│  ├─ notificaciones al estudiante (simuladas por consola) ✔
+│  │  ├─ CP-39 las operaciones rechazadas no envían notificaciones ✔
+│  │  ├─ CP-37 asignar responsable notifica al estudiante e incluye el nombre del respons... ✔
+│  │  ├─ CP-38 cambiar de estado notifica al estudiante e incluye el nuevo estado ✔
+│  │  └─ CP-36 el alta notifica al email del estudiante e indica el número de solicitud ✔
+│  ├─ mejoras esperadas (defectos de la Etapa 2) ✔
+│  │  ├─ MJ-02 modificar la lista devuelta por listarTodas no debe alterar el repositorio ✘ expected: <3> but was: <0>
+│  │  └─ MJ-01 un id no numérico en el menú no debe cerrar el programa con excepción ✘ Unexpected exception thrown: java.lang.NumberFormatException: For input string: "abc"
+│  ├─ generarReporte ✔
+│  │  ├─ CP-30 reporte con los datos de prueba: texto idéntico al del contrato ✔
+│  │  ├─ plazoDeVencimientoPorPrioridad(String, int, int) ✔
+│  │  │  ├─ CP-34 prioridad ALTA con 2 días de antigüedad: vencidas = 0 ✔
+│  │  │  ├─ CP-34 prioridad ALTA con 3 días de antigüedad: vencidas = 1 ✔
+│  │  │  ├─ CP-34 prioridad MEDIA con 5 días de antigüedad: vencidas = 0 ✔
+│  │  │  ├─ CP-34 prioridad MEDIA con 6 días de antigüedad: vencidas = 1 ✔
+│  │  │  ├─ CP-34 prioridad BAJA con 10 días de antigüedad: vencidas = 0 ✔
+│  │  │  └─ CP-34 prioridad BAJA con 11 días de antigüedad: vencidas = 1 ✔
+│  │  ├─ CP-33 una solicitud rechazada por validación no suma al reporte ✔
+│  │  ├─ CP-35 solo vencen las PENDIENTE y EN_REVISION: una RESUELTA antigua no cuenta ✔
+│  │  ├─ CP-31 reporte de un gestor vacío: todo en cero ✔
+│  │  └─ CP-32 el reporte cuenta cada estado tras mover solicitudes ✔
+│  ├─ obtener, buscarPor... y listarTodas ✔
+│  │  ├─ CP-28 un gestor sin datos devuelve listas vacías ✔
+│  │  ├─ CP-27 listarTodas devuelve todas en orden de alta ✔
+│  │  ├─ CP-26 las búsquedas respetan el orden de alta ✔
+│  │  ├─ buscarPorTipo(String, int) ✔
+│  │  │  ├─ CP-24 buscarPorTipo("CERTIFICADO") devuelve 1 solicitudes ✔
+│  │  │  ├─ CP-24 buscarPorTipo("equivalencia") devuelve 1 solicitudes ✔
+│  │  │  ├─ CP-24 buscarPorTipo("RECLAMO_NOTA") devuelve 1 solicitudes ✔
+│  │  │  ├─ CP-24 buscarPorTipo("CAMBIO_COMISION") devuelve 0 solicitudes ✔
+│  │  │  └─ CP-24 buscarPorTipo("TITULO") devuelve 0 solicitudes ✔
+│  │  ├─ CP-22 obtener devuelve la solicitud existente y null si no existe ✔
+│  │  ├─ buscarPorEstado(String, int) ✔
+│  │  │  ├─ CP-23 buscarPorEstado("PENDIENTE") devuelve 2 solicitudes ✔
+│  │  │  ├─ CP-23 buscarPorEstado("pendiente") devuelve 2 solicitudes ✔
+│  │  │  ├─ CP-23 buscarPorEstado("En_Revision") devuelve 1 solicitudes ✔
+│  │  │  ├─ CP-23 buscarPorEstado("RESUELTA") devuelve 0 solicitudes ✔
+│  │  │  ├─ CP-23 buscarPorEstado("RECHAZADA") devuelve 0 solicitudes ✔
+│  │  │  ├─ CP-23 buscarPorEstado("CERRADA") devuelve 0 solicitudes ✔
+│  │  │  └─ CP-23 buscarPorEstado("INEXISTENTE") devuelve 0 solicitudes ✔
+│  │  ├─ buscarPorLegajo(String, int) ✔
+│  │  │  ├─ CP-25 buscarPorLegajo("1001") devuelve 2 solicitudes ✔
+│  │  │  ├─ CP-25 buscarPorLegajo("1002") devuelve 1 solicitudes ✔
+│  │  │  └─ CP-25 buscarPorLegajo("9999") devuelve 0 solicitudes ✔
+│  │  └─ CP-29 cargarDatosDePrueba deja las 3 solicitudes del contrato (la 2 en revisión) ✔
+│  ├─ registrarSolicitud ✔
+│  │  ├─ CP-07 descripción de exactamente 10 caracteres es válida (valor límite) ✔
+│  │  ├─ CP-08 si el legajo ya existe se reutiliza el estudiante (conserva su email origi... ✔
+│  │  ├─ CP-01 datos válidos: devuelve el id siguiente y la solicitud queda PENDIENTE ✔
+│  │  ├─ tiposValidos(String) ✔
+│  │  │  ├─ CP-05 tipo "CERTIFICADO" válido (sin distinguir mayúsculas) ✔
+│  │  │  ├─ CP-05 tipo "EQUIVALENCIA" válido (sin distinguir mayúsculas) ✔
+│  │  │  ├─ CP-05 tipo "CAMBIO_COMISION" válido (sin distinguir mayúsculas) ✔
+│  │  │  ├─ CP-05 tipo "RECLAMO_NOTA" válido (sin distinguir mayúsculas) ✔
+│  │  │  ├─ CP-05 tipo "certificado" válido (sin distinguir mayúsculas) ✔
+│  │  │  └─ CP-05 tipo "Reclamo_Nota" válido (sin distinguir mayúsculas) ✔
+│  │  ├─ CP-04 valores nulos en cualquier parámetro devuelven -1 (sin excepción) ✔
+│  │  ├─ datosInvalidosDevuelvenMenosUnoYNoAgregan(String, String, String, String, String... ✔
+│  │  │  ├─ CP-03 rechaza legajo vacío ✔
+│  │  │  ├─ CP-03 rechaza legajo solo espacios ✔
+│  │  │  ├─ CP-03 rechaza nombre vacío ✔
+│  │  │  ├─ CP-03 rechaza apellido vacío ✔
+│  │  │  ├─ CP-03 rechaza email sin arroba ✔
+│  │  │  ├─ CP-03 rechaza tipo inexistente ✔
+│  │  │  ├─ CP-03 rechaza prioridad inexistente ✔
+│  │  │  ├─ CP-03 rechaza descripción de 9 letras ✔
+│  │  │  └─ CP-03 rechaza descripción con espacios que no cuentan ✔
+│  │  ├─ prioridadesValidas(String) ✔
+│  │  │  ├─ CP-06 prioridad "BAJA" válida (sin distinguir mayúsculas) ✔
+│  │  │  ├─ CP-06 prioridad "MEDIA" válida (sin distinguir mayúsculas) ✔
+│  │  │  ├─ CP-06 prioridad "ALTA" válida (sin distinguir mayúsculas) ✔
+│  │  │  ├─ CP-06 prioridad "baja" válida (sin distinguir mayúsculas) ✔
+│  │  │  └─ CP-06 prioridad "Alta" válida (sin distinguir mayúsculas) ✔
+│  │  ├─ CP-02 el id es autoincremental y arranca en 1 ✔
+│  │  └─ legajoVacioONuloEsRechazado(String) ✔
+│  │     ├─ CP-09 legajo "null" rechazado ✔
+│  │     ├─ CP-09 legajo "" rechazado ✔
+│  │     ├─ CP-09 legajo " " rechazado ✔
+│  │     └─ CP-09 legajo " " rechazado ✔
+│  ├─ asignarResponsable ✔
+│  │  ├─ CP-11 reasignar en EN_REVISION devuelve true y mantiene el estado ✔
+│  │  ├─ CP-13 solicitud inexistente devuelve false ✔
+│  │  ├─ CP-12 en RESUELTA permite asignar y no cambia el estado ✔
+│  │  ├─ responsableVacioDevuelveFalse(String) ✔
+│  │  │  ├─ CP-14 responsable "null" devuelve false y no cambia el estado ✔
+│  │  │  ├─ CP-14 responsable "" devuelve false y no cambia el estado ✔
+│  │  │  └─ CP-14 responsable "   " devuelve false y no cambia el estado ✔
+│  │  ├─ CP-10 asignar a una solicitud PENDIENTE devuelve true y la pasa a EN_REVISION ✔
+│  │  └─ solicitudFinalizadaDevuelveFalse(String) ✔
+│  │     ├─ CP-15 solicitud CERRADA no admite asignación ✔
+│  │     └─ CP-15 solicitud RECHAZADA no admite asignación ✔
+│  ├─ cambiarEstado ✔
+│  │  ├─ transicionesInvalidas(String, String) ✔
+│  │  │  ├─ CP-17 transición inválida PENDIENTE -> PENDIENTE devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida PENDIENTE -> RESUELTA devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida PENDIENTE -> CERRADA devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida EN_REVISION -> PENDIENTE devuelve false y no cambia na... ✔
+│  │  │  ├─ CP-17 transición inválida EN_REVISION -> EN_REVISION devuelve false y no cambia ... ✔
+│  │  │  ├─ CP-17 transición inválida EN_REVISION -> CERRADA devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida RESUELTA -> PENDIENTE devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida RESUELTA -> EN_REVISION devuelve false y no cambia nad... ✔
+│  │  │  ├─ CP-17 transición inválida RESUELTA -> RESUELTA devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida RESUELTA -> RECHAZADA devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida RECHAZADA -> PENDIENTE devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida RECHAZADA -> EN_REVISION devuelve false y no cambia na... ✔
+│  │  │  ├─ CP-17 transición inválida RECHAZADA -> RESUELTA devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida RECHAZADA -> RECHAZADA devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida RECHAZADA -> CERRADA devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida CERRADA -> PENDIENTE devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida CERRADA -> EN_REVISION devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida CERRADA -> RESUELTA devuelve false y no cambia nada ✔
+│  │  │  ├─ CP-17 transición inválida CERRADA -> RECHAZADA devuelve false y no cambia nada ✔
+│  │  │  └─ CP-17 transición inválida CERRADA -> CERRADA devuelve false y no cambia nada ✔
+│  │  ├─ CP-20 solicitud inexistente, estado nulo o desconocido devuelven false ✔
+│  │  ├─ CP-21 ciclo de vida completo: alta, asignación, resolución y cierre ✔
+│  │  ├─ transicionesValidas(String, String) ✔
+│  │  │  ├─ CP-16 transición válida PENDIENTE -> RECHAZADA ✔
+│  │  │  ├─ CP-16 transición válida EN_REVISION -> RESUELTA ✔
+│  │  │  ├─ CP-16 transición válida EN_REVISION -> RECHAZADA ✔
+│  │  │  └─ CP-16 transición válida RESUELTA -> CERRADA ✔
+│  │  ├─ CP-19 el nuevo estado no distingue mayúsculas ✔
+│  │  └─ CP-18 PENDIENTE -> EN_REVISION sin responsable asignado devuelve false ✔
+│  └─ menú de consola (Main) ✔
+│     ├─ CP-40 listar (7), reporte (8) y salir (0) muestran los datos de prueba ✔
+│     ├─ CP-43 registrar por el menú (1) con datos válidos informa el id asignado ✔
+│     ├─ CP-45 buscar por tipo (5) y por legajo (6) listan las solicitudes encontradas ✔
+│     ├─ CP-46 una opción inválida o no numérica muestra 'Opcion invalida' y el menú sigu... ✔
+│     ├─ CP-44 registrar por el menú con datos inválidos no crea la solicitud ✔
+│     ├─ CP-41 flujo de la evidencia 1.8: pasar a EN_REVISION sin responsable es rechazad... ✔
+│     └─ CP-42 buscar sin resultados informa que no hay resultados ✔
+└─ JUnit Vintage ✔
+
+Failures (2):
+  JUnit Jupiter:mejoras esperadas (defectos de la Etapa 2):MJ-02 modificar la lista devuelta por listarTodas no debe alterar el repositorio
+    MethodSource [className = 'solicitudes.MejorasEsperadasTest', methodName = 'listarTodasNoExponeLaListaInterna', methodParameterTypes = '']
+    => org.opentest4j.AssertionFailedError: expected: <3> but was: <0>
+       org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+       org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+       org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+       org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+       org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)
+       org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:531)
+       solicitudes.MejorasEsperadasTest.listarTodasNoExponeLaListaInterna(MejorasEsperadasTest.java:56)
+       java.base/java.lang.reflect.Method.invoke(Method.java:580)
+       java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+       java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+  JUnit Jupiter:mejoras esperadas (defectos de la Etapa 2):MJ-01 un id no numérico en el menú no debe cerrar el programa con excepción
+    MethodSource [className = 'solicitudes.MejorasEsperadasTest', methodName = 'idNoNumericoNoTerminaConExcepcion', methodParameterTypes = '']
+    => org.opentest4j.AssertionFailedError: Unexpected exception thrown: java.lang.NumberFormatException: For input string: "abc"
+       org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+       org.junit.jupiter.api.AssertDoesNotThrow.createAssertionFailedError(AssertDoesNotThrow.java:84)
+       org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:53)
+       org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:36)
+       org.junit.jupiter.api.Assertions.assertDoesNotThrow(Assertions.java:3168)
+       [...]
+     Caused by: java.lang.NumberFormatException: For input string: "abc"
+       java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)
+       java.base/java.lang.Integer.parseInt(Integer.java:662)
+       java.base/java.lang.Integer.parseInt(Integer.java:778)
+       solicitudes.Main.main(Main.java:60)
+       solicitudes.MejorasEsperadasTest.lambda$idNoNumericoNoTerminaConExcepcion$0(MejorasEsperadasTest.java:41)
+       [...]
+
+Test run finished after 515 ms
+[        23 containers found      ]
+[         0 containers skipped    ]
+[        23 containers started    ]
+[         0 containers aborted    ]
+[        23 containers successful ]
+[         0 containers failed     ]
+[       110 tests found           ]
+[         0 tests skipped         ]
+[       110 tests started         ]
+[         0 tests aborted         ]
+[       108 tests successful      ]
+[         2 tests failed          ]
+
+
